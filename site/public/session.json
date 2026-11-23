@@ -1,0 +1,18 @@
+{
+ "note": "DEVELOPMENT ONLY. Built from the 24 Nov rehearsal with a test bot and synthetic voices; replace with the real recorded call before deploying.",
+ "started": "2026-11-24T19:36:43.000Z",
+ "channel": "General",
+ "wearer": "Sudeep",
+ "events": [
+  {"t": 0, "type": "consent", "captioned": 1},
+  {"t": 14000, "type": "caption", "speaker": "Asha", "text": "The build is green, we can ship tonight"},
+  {"t": 17000, "type": "caption", "speaker": "Asha", "text": "Sudip, which branch has the fix?"},
+  {"t": 19500, "type": "called", "asker": "Asha", "question": "Sudip, which branch has the fix?", "replies": ["Let me check and post it here.", "Not sure right now, can I get back to you?", "Which fix do you mean?"], "by": "llm"},
+  {"t": 24000, "type": "tap", "index": 0, "reply": "Let me check and post it here."},
+  {"t": 30000, "type": "speaking"},
+  {"t": 56000, "type": "caption", "speaker": "Ravi", "text": "I checked the logs, nothing new since noon."},
+  {"t": 60000, "type": "caption", "speaker": "Ravi", "text": "Did Sudeep push the fix already?"},
+  {"t": 64000, "type": "caption", "speaker": "Asha", "text": "Hey Sudhi, are you free for the design review at 4?"},
+  {"t": 65400, "type": "called", "asker": "Asha", "question": "Hey Sudhi, are you free for the design review at 4?", "replies": ["Yes, I'm free.", "Not right now, can it wait?", "Is there anything I should do to prepare?"], "by": "llm"}
+ ]
+}
