@@ -24,4 +24,12 @@ export function isQuestion(text) {
   return norm(text).split(/ (?:and|so|but|okay|ok) | ?, ?/).some(c => WH.test(c.replace(/^(hey|hi|so|okay|ok|and|um|uh) /, '')))
 }
 
-export function calledBy(text, aliases) { return mentions(text, aliases) && isQuestion(text) }
+// Addressed, not talked about: "Sudeep, can you..." or "hey Sudhi are you..." or any question with "you" in it.
+// "Did Sudeep push the fix?" is about the wearer, not to them, so it stays a caption.
+export function addressed(text, aliases) {
+  if (/\byou(r|rs|rself)?\b/i.test(text)) return true
+  // the name on its own between punctuation, the way people call someone: "Sudeep, ...", "... thoughts, Sudhi?"
+  return text.split(/[,.?!:;]/).some(c => { const w = norm(c).replace(/^(hey|hi|so|okay|ok|and|um|uh|oh) /, '').split(' ').filter(Boolean); return w.length === 1 && mentions(w[0], aliases) })
+}
+
+export function calledBy(text, aliases) { return mentions(text, aliases) && isQuestion(text) && addressed(text, aliases) }

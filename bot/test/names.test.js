@@ -24,4 +24,8 @@ test('called means named and asked', () => {
   assert.ok(calledBy('Sudhi, can you take the deploy tonight?', A))
   assert.ok(!calledBy('Sudeep took the deploy last night.', A))
   assert.ok(!calledBy('Can someone take the deploy tonight?', A))
+  assert.ok(!calledBy('Did Sudeep push the fix?', A))            // about the wearer, not to them
+  assert.ok(!calledBy('Is Sudeep joining us later?', A))
+  assert.ok(calledBy('Sudeep, which branch has the fix?', A))    // name as the address, no "you"
+  assert.ok(calledBy('hey Sudhi are you free after nine', A))
 })
