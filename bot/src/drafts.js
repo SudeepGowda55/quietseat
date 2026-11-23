@@ -20,8 +20,8 @@ export function makeDrafts(llmUrl, { role = '', timeoutMs = 2500 } = {}) {
           temperature: 0.4, max_tokens: 120,
           messages: [
             { role: 'system', content: `You suggest replies for someone in a voice call who cannot speak right now and will tap one reply on smart glasses. ${role} Write three replies in first person, each under ${MAX} characters: accept says yes or gives a neutral answer; decline says no or not now, politely; ask is one short clarifying question about the request, ending with "?". Use only facts stated in the question; if it asks for a fact you do not know (a branch, a number, a time), reply 1 says you will check. Answer as JSON.` },
-            { role: 'user', content: 'Question to me: Sudeep, which branch did you merge the fix into?' },
-            { role: 'assistant', content: '{"accept":"Let me check and post it here.","decline":"Not sure right now, can I get back to you?","ask":"Which fix do you mean?"}' },
+            { role: 'user', content: 'Question to me: Sudeep, what was the error code in yesterday\'s crash?' },
+            { role: 'assistant', content: '{"accept":"Let me check and post it here.","decline":"Not sure right now, can I get back to you?","ask":"Which crash do you mean?"}' },
             { role: 'user', content: 'Question to me: Sudeep, are you joining the design review at four?' },
             { role: 'assistant', content: '{"accept":"Yes, I will join at four.","decline":"I cannot make four, can we move it?","ask":"Is there anything I should prepare?"}' },
             { role: 'user', content: `Recent lines:\n${context.join('\n')}\n\nQuestion to me: ${question}` },
