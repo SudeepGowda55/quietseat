@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works · Quiet Seat</title>
+<meta name="description" content="How Quiet Seat works: opt-in consent, whisper.cpp speech to text on the laptop, the rules for a question asked by name, checked replies and the G2 screens.">
+<link rel="canonical" href="%SITE%/how-it-works/">
+<meta property="og:title" content="How it works · Quiet Seat">
+<meta property="og:description" content="How Quiet Seat works: opt-in consent, whisper.cpp speech to text on the laptop, the rules for a question asked by name, checked replies and the G2 screens.">
+<meta property="og:url" content="%SITE%/how-it-works/">
+<!--head-->
+</head>
+<body>
+<!--nav-->
+<main>
+  <header class="page-head with-lens">
+    <div>
+    <h1 data-caption>From a voice in the call <em>to a line on your glasses.</em></h1>
+    <p class="lede rv">Three parts, all on hardware you already carry: a Discord bot and two small models on your laptop, and an app on the G2 that only draws screens and sends taps back.</p>
+    </div>
+    <div class="head-lens rv">
+      <div class="lens-frame"><canvas class="lens" id="head-lens" role="img" aria-label="The G2 display replaying the recorded call"></canvas></div>
+      <p class="lens-label"><span class="live">Replay of a recorded call</span><span data-date></span><span class="devdata">development data</span></p>
+    </div>
+  </header>
+
+  <section class="section split" id="consent">
+    <div class="prose">
+      <h2 data-caption>Consent, <em>per person, per call.</em></h2>
+      <p class="rv">When you join a voice channel, the bot follows you in with its microphone muted and posts a card in the call's chat. Pressing <b>Caption me</b> opts you in; <b>No thanks / stop</b> opts you out at any time, and leaving the call ends your consent. When you leave, the bot leaves too and deletes the card.</p>
+      <p class="rv">For people who have not opted in, the bot never subscribes to their audio. It only notices that someone is talking, so the glasses can say “Sam speaking (not captioned)” and you know to look up.</p>
+    </div>
+    <div class="dc-card rv" data-consent></div>
+  </section>
+
+  <section class="section split" id="speech">
+    <div class="prose">
+      <h2 data-caption>Speech to text <em>on your laptop.</em></h2>
+      <p class="rv">Discord sends each person's voice separately. After 700 ms of silence the bot turns that turn into a 16 kHz WAV and sends it to a whisper.cpp server running <code>small.en</code> on 127.0.0.1. The request carries your names as a prompt, so whisper spells them closer to right.</p>
+      <ul class="rv">
+        <li>Clips under 0.4 s are skipped, and whisper's habit of hearing “Thank you.” in silence is filtered out.</li>
+        <li>Turns are transcribed one at a time, so captions stay in the order people spoke.</li>
+        <li>The caption reaches the glasses about 0.5 s after a sentence ends, on an M1 MacBook Air with 8 GB.</li>
+      </ul>
+    </div>
+    <div class="panel rv">
+      <div class="lens-frame"><canvas class="lens" data-screen="captions" role="img" aria-label="The captions screen on the G2"></canvas></div>
+      <p class="lens-label">Captions screen: the channel, how many are captioned, then the newest lines that fit</p>
+    </div>
+  </section>
+
+  <section class="section" id="names">
+    <div class="section-head">
+      <h2 data-caption>Asked by name, <em>not talked about.</em></h2>
+      <p class="lede rv">A line switches the glasses to the question only when all three rules hold. Try it: this box runs the bot's own rules from <code>bot/src/names.js</code>, with the default names Sudeep, Sudhi and Sudip.</p>
+    </div>
+    <div class="split">
+      <div class="tester rv">
+        <label class="sr" for="say">A line someone says in the call</label>
+        <input id="say" type="text" value="Hey Sudhi, are you free for the design review at 4?" autocomplete="off" spellcheck="false">
+        <div class="chips" aria-label="Examples"></div>
+        <p class="verdict" aria-live="polite"></p>
+        <ul class="checks"></ul>
+      </div>
+      <div class="prose rv">
+        <h3>Your name, loosely</h3>
+        <p>One word matches one of your names exactly, or within one letter for names of five letters or more. Whisper's “Sudhi” and “Sudip” both reach Sudeep; “Sudeepa” is someone else.</p>
+        <h3>A question, strictly</h3>
+        <p>It ends in a question mark, or has a helper verb and its subject (“can you”, “are we”), or a clause starts with a question word.</p>
+        <h3>Said to you</h3>
+        <p>It says “you”, or your name stands alone between commas, the way people call someone. “Did Sudeep push the fix?” is about you, so it stays a caption.</p>
+        <p class="label">After a reply, new questions wait 20 s, and only one question is on screen at a time.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section split" id="drafts">
+    <div class="prose">
+      <h2 data-caption>Three replies, <em>checked before you see them.</em></h2>
+      <p class="rv">A 1.5B language model on the laptop (llama.cpp) gets the question and the two lines before it, and must answer within 2.5 s as JSON with three fields:</p>
+      <ul class="rv">
+        <li><b>accept</b>: yes, or a neutral answer.</li>
+        <li><b>decline</b>: no or not now, politely.</li>
+        <li><b>ask</b>: one short question back, ending in “?”.</li>
+      </ul>
+      <p class="rv">Small models make things up, so each reply is checked. A reply that brings in a name in quotes, a number, a time or a branch name the question did not have is swapped for a built-in reply. So is a decline that says yes, or an ask that does not ask. If the model is slow or not running, the built-in replies are used, so the glasses never wait. Replies are cut to 60 characters to fit the screen.</p>
+    </div>
+    <div class="panel rv">
+      <div class="lens-frame"><canvas class="lens" data-screen="called" role="img" aria-label="The question screen on the G2 with three replies"></canvas></div>
+      <p class="lens-label">Question screen: who asked, the question, three replies and Dismiss</p>
+    </div>
+  </section>
+
+  <section class="section" id="screens">
+    <div class="section-head">
+      <h2 data-caption>Every screen <em>the G2 shows.</em></h2>
+      <p class="lede rv">The glasses app is a thin client: it connects to the bot on your laptop over WebSocket with a pairing token, draws what it is sent at most every 120 ms, and sends back taps from the R1 ring. Text is plain ASCII, because the glasses drop anything else.</p>
+    </div>
+    <div class="screens">
+      <figure class="rv"><div class="lens-frame"><canvas class="lens" data-screen="status" role="img" aria-label="Connecting screen"></canvas></div><figcaption><b>Connecting.</b> Shown until the bot answers; it retries on its own if the laptop sleeps.</figcaption></figure>
+      <figure class="rv"><div class="lens-frame"><canvas class="lens" data-screen="captions" role="img" aria-label="Captions screen"></canvas></div><figcaption><b>Captions.</b> Tap the ring here if the detector missed a question: the last captioned line becomes the question.</figcaption></figure>
+      <figure class="rv"><div class="lens-frame"><canvas class="lens" data-screen="called-sel" role="img" aria-label="Question screen with a reply selected"></canvas></div><figcaption><b>Asked you.</b> Scroll the ring to move the box, tap to send. Dismiss goes back to captions.</figcaption></figure>
+      <figure class="rv"><div class="lens-frame"><canvas class="lens" data-screen="sent" role="img" aria-label="Sent confirmation screen"></canvas></div><figcaption><b>Sent.</b> For two seconds, then back to captions. A double tap closes the app.</figcaption></figure>
+    </div>
+    <p class="label rv" style="margin-top:28px">Screens drawn from the recorded call in <code>session.json</code>, laid out as <code>glasses/src/main.ts</code> lays them out.</p>
+  </section>
+</main>
+<!--foot-->
+<script type="module" src="/src/how.js"></script>
+</body>
+</html>

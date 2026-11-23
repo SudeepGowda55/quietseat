@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy · Quiet Seat</title>
+<meta name="description" content="Quiet Seat captions only people who press Caption me, transcribes on the wearer's laptop and keeps no audio or transcript. Calls are recorded only if announced.">
+<link rel="canonical" href="%SITE%/privacy/">
+<meta property="og:title" content="Privacy · Quiet Seat">
+<meta property="og:description" content="Quiet Seat captions only people who press Caption me, transcribes on the wearer's laptop and keeps no audio or transcript. Calls are recorded only if announced.">
+<meta property="og:url" content="%SITE%/privacy/">
+<!--head-->
+</head>
+<body>
+<!--nav-->
+<main>
+  <header class="page-head">
+    <h1 data-caption>Nobody is captioned <em>until they say yes.</em></h1>
+    <p class="lede rv">Quiet Seat is for the person wearing the glasses, but it listens to everyone else in the call. So it asks them first, does the listening on the wearer's own laptop, and keeps nothing afterwards.</p>
+  </header>
+
+  <section class="section toggle-demo" id="try">
+    <div class="dc-card rv">
+      <div data-card></div>
+      <div class="dc-btns" role="group" aria-label="Your choice">
+        <button type="button" class="primary" data-on aria-pressed="true">Caption me</button>
+        <button type="button" data-off aria-pressed="false">No thanks / stop</button>
+      </div>
+    </div>
+    <div class="rv">
+      <div class="lens-frame"><canvas class="lens" id="privacy-lens" role="img" aria-label="What the wearer's glasses show for this person"></canvas></div>
+      <p class="lens-label" data-explain></p>
+    </div>
+  </section>
+
+  <section class="section ledger" id="kept">
+    <section class="never rv">
+      <h2>Never kept</h2>
+      <ul>
+        <li>Audio. Each turn is decoded in memory, sent to whisper.cpp on 127.0.0.1 and dropped.</li>
+        <li>Transcripts. The last 30 lines live in memory for the glasses and are cleared when the wearer leaves the call.</li>
+        <li>What anyone said, in the bot's logs. Logs carry timings only.</li>
+        <li>The voice of anyone who did not opt in. The bot does not subscribe to their audio; it only sees that they are talking.</li>
+      </ul>
+    </section>
+    <section class="kept rv">
+      <h2>What does leave the laptop</h2>
+      <ul>
+        <li>Caption text, over your local network to the glasses app, which needs the pairing token printed by the bot.</li>
+        <li>The reply you tap. It is posted in the call's chat like any other message, addressed to the person who asked.</li>
+        <li>The consent card, posted in the call's chat when the bot joins and deleted when it leaves.</li>
+        <li>Nothing goes to a cloud speech or language service: whisper.cpp and the 1.5B reply model both run on the laptop.</li>
+      </ul>
+    </section>
+  </section>
+
+  <section class="section split" id="recording">
+    <div class="prose">
+      <h2 data-caption>Recorded only when <em>the card says so.</em></h2>
+      <p class="rv">The replay on this site comes from a call recorded on purpose. Recording is off unless the bot is started with <code>QS_RECORD</code>, and then the consent card says so in bold before anyone chooses.</p>
+      <p class="rv">The recording holds only:</p>
+      <ul class="rv">
+        <li>captions of people who pressed Caption me,</li>
+        <li>a “speaking” mark with no name for anyone else,</li>
+        <li>how many people are captioned,</li>
+        <li>the question asked by name, the three replies, and the reply tapped.</li>
+      </ul>
+      <p class="rv">The bot refuses to start if recording is combined with the test-only setting that captions bots without a button press, so everyone in a recording opted in.</p>
+    </div>
+    <div class="rv">
+      <div class="dc-card" data-card-rec></div>
+      <p class="lens-label">The card as posted when <code>QS_RECORD</code> is set</p>
+    </div>
+  </section>
+</main>
+<!--foot-->
+<script type="module" src="/src/privacy.js"></script>
+</body>
+</html>

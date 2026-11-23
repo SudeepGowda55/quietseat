@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run it · Quiet Seat</title>
+<meta name="description" content="Run Quiet Seat yourself: Node 22, whisper.cpp small.en, llama.cpp with a 1.5B model, a Discord bot token, and the G2 app in the simulator or on real glasses.">
+<link rel="canonical" href="%SITE%/run/">
+<meta property="og:title" content="Run it · Quiet Seat">
+<meta property="og:description" content="Run Quiet Seat yourself: Node 22, whisper.cpp small.en, llama.cpp with a 1.5B model, a Discord bot token, and the G2 app in the simulator or on real glasses.">
+<meta property="og:url" content="%SITE%/run/">
+<!--head-->
+</head>
+<body>
+<!--nav-->
+<main>
+  <header class="page-head with-lens">
+    <div>
+    <h1 data-caption>Run it <em>on your own laptop.</em></h1>
+    <p class="lede rv">Everything below runs on one Mac; it was built and measured on an M1 MacBook Air with 8 GB. You need Node 22.12 or newer, Homebrew, a Discord server you can add a bot to, and either Even Realities G2 glasses with the R1 ring or the Even Hub simulator.</p>
+    </div>
+    <div class="head-lens rv">
+      <div class="lens-frame"><canvas class="lens" id="head-lens" role="img" aria-label="The G2 display while the glasses app looks for the bot"></canvas></div>
+      <p class="lens-label">What the glasses app shows while it finds the bot on your laptop</p>
+    </div>
+  </header>
+
+  <section class="section split" id="discord">
+    <div class="prose">
+      <h2 data-caption>A Discord bot <em>for your server.</em></h2>
+      <p class="rv">In the Discord Developer Portal, create an application, open <b>Bot</b> and copy its token. Under <b>OAuth2</b>, generate an invite link with the <code>bot</code> scope and the <b>View Channels</b>, <b>Send Messages</b> and <b>Connect</b> permissions, and add it to your server. No privileged intents are needed.</p>
+      <p class="rv">Turn on Developer Mode in Discord, right-click your server and copy its ID. The bot captions for the server owner unless you set <code>QS_WEARER_ID</code> to someone else's user ID.</p>
+    </div>
+    <div class="panel builder rv">
+      <h3>Your <code>bot/.env</code></h3>
+      <label for="b-guild">Server ID</label><input id="b-guild" type="text" placeholder="paste your server ID" autocomplete="off">
+      <label for="b-names">Your name, and how whisper tends to spell it</label><input id="b-names" type="text" value="Sudeep,Sudhi,Sudip" autocomplete="off">
+      <label class="toggle"><input id="b-llm" type="checkbox" checked> Drafts from the 1.5B model (off: built-in replies only)</label>
+      <label class="toggle"><input id="b-rec" type="checkbox"> Record this call (announced on the consent card)</label>
+      <div class="cmd" style="margin-top:16px"><button class="copy" type="button">Copy</button><pre id="b-out"></pre></div>
+      <p class="label">The pairing token is made in your browser and never sent anywhere. Paste your bot token yourself.</p>
+    </div>
+  </section>
+
+  <section class="section prose" id="models" style="max-width:none">
+    <div class="split">
+      <div>
+        <h2 data-caption>Speech to text, <em>whisper.cpp.</em></h2>
+        <p class="rv">The bot expects a whisper.cpp server on port 8178 (change it with <code>QS_WHISPER</code>). The <code>small.en</code> model is about 470 MB and uses about 850 MB of memory once loaded.</p>
+        <div class="cmd rv"><button class="copy" type="button">Copy</button><pre>brew install whisper-cpp
+curl -L -o ggml-small.en.bin \
+  https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin
+whisper-server -m ggml-small.en.bin --host 127.0.0.1 --port 8178 -fa</pre></div>
+      </div>
+      <div>
+        <h2 data-caption>Reply drafts, <em>llama.cpp.</em></h2>
+        <p class="rv">A 1.5B instruct model, 4-bit, about 1 GB. Point <code>QS_LLM</code> at it. Leave it out and the bot uses built-in replies.</p>
+        <div class="cmd rv"><button class="copy" type="button">Copy</button><pre>brew install llama.cpp
+curl -L -o qwen2.5-1.5b-instruct-q4_k_m.gguf \
+  https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf
+llama-server -m qwen2.5-1.5b-instruct-q4_k_m.gguf --host 127.0.0.1 --port 8179</pre></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section split" id="bot">
+    <div class="prose">
+      <h2 data-caption>The bot.</h2>
+      <p class="rv"><code>npm install</code> also applies a one-line patch to @discordjs/voice (discord.js issue #11653) so receiving audio survives end-to-end encryption changes in the call. Join a voice channel and the bot follows you in. It prints the address for the glasses app, with the pairing token in it.</p>
+      <div class="cmd rv"><button class="copy" type="button">Copy</button><pre>git clone https://github.com/SudeepGowda55/quietseat
+cd quietseat/bot
+npm install
+node --env-file=.env src/index.js
+<span class="c"># ready; wearer found
+# open the glasses app at http://192.168.1.20:5173/?ws=ws://192.168.1.20:8787&amp;token=…</span></pre></div>
+      <p class="rv">The bot's tests run without Discord: <code>npm test</code>.</p>
+    </div>
+    <div class="prose">
+      <h2 data-caption>The glasses app.</h2>
+      <p class="rv">A Vite app for the Even Hub. Start it, then open the address the bot printed in the simulator, or turn it into a QR code for the Even app on your phone to load on a real G2.</p>
+      <div class="cmd rv"><button class="copy" type="button">Copy</button><pre>cd quietseat/glasses
+npm install
+npm run dev
+<span class="c"># in the simulator</span>
+npx evenhub-simulator "&lt;address the bot printed&gt;"
+<span class="c"># on real G2 glasses: scan with the Even app</span>
+npx evenhub qr --url "&lt;address the bot printed&gt;"</pre></div>
+      <p class="rv">Keep the quotes: the address has an <code>&amp;</code> in it. Your phone and laptop must be on the same network.</p>
+    </div>
+  </section>
+
+  <section class="section" id="env">
+    <div class="section-head"><h2 data-caption>Every setting.</h2></div>
+    <div class="rv" style="overflow-x:auto">
+      <table class="envtable">
+        <thead><tr><th>Variable</th><th>What it does</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td>DISCORD_TOKEN</td><td>The bot's token.</td><td>required</td></tr>
+          <tr><td>DISCORD_GUILD_ID</td><td>Your server's ID.</td><td>required</td></tr>
+          <tr><td>QS_WEARER_ID</td><td>The Discord user wearing the glasses.</td><td>server owner</td></tr>
+          <tr><td>QS_ALIASES</td><td>Comma-separated names that count as yours, including whisper's spellings.</td><td>Sudeep,Sudhi,Sudip</td></tr>
+          <tr><td>QS_WHISPER</td><td>whisper.cpp server address.</td><td>http://127.0.0.1:8178</td></tr>
+          <tr><td>QS_LLM</td><td>llama.cpp server address for reply drafts. Empty: built-in replies.</td><td>empty</td></tr>
+          <tr><td>QS_ROLE</td><td>One line about you, added to the drafting prompt.</td><td>empty</td></tr>
+          <tr><td>QS_PAIR_TOKEN</td><td>Token the glasses app must present. Without it, anyone on your network could reply as you.</td><td>random per start</td></tr>
+          <tr><td>QS_PORT</td><td>WebSocket port for the glasses app.</td><td>8787</td></tr>
+          <tr><td>QS_RECORD</td><td>File to record the call to, for a demo. Announced on the consent card.</td><td>off</td></tr>
+          <tr><td>QS_JOIN</td><td>Join a voice channel by name without the wearer, for test runs.</td><td>off</td></tr>
+          <tr><td>QS_CAPTION_ALSO</td><td>Test only: user IDs of bots to caption without a button press. Refused together with QS_RECORD.</td><td>empty</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<!--foot-->
+<script type="module" src="/src/run.js"></script>
+</body>
+</html>
