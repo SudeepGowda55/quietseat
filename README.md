@@ -10,9 +10,10 @@ Built for the [Heads Up: Even Realities Hackathon](https://dorahacks.io/hackatho
 
 In progress during build week (23 to 29 November 2026). Measured so far on an M1 MacBook Air (8 GB):
 
-- Speech to text: whisper.cpp `small.en` on this laptop, about 0.75 s per spoken sentence once loaded, 850 MB of memory.
-- The G2 screen in the Even Hub simulator 0.9.5: about 56 characters per line and 9 caption lines; the reply screen fits the question plus three replies of up to about 60 characters.
-- Discord: the bot joins a voice channel with end-to-end encryption (DAVE) and reaches the ready state.
+- Speech to text: whisper.cpp `small.en` on this laptop, a caption about 0.5 s after each sentence ends (Discord audio, end to end), 850 MB of memory.
+- The question on the glasses: 1.4 to 2.5 s after the asker stops speaking, including three replies drafted by a 1.5B model on the laptop (about 260 MB).
+- The G2 screen in the Even Hub simulator 0.9.5: about 54 characters per line and 9 caption lines; the reply screen fits the question plus three replies of up to 60 characters.
+- Discord: the bot receives end-to-end encrypted (DAVE) voice, posts the consent card, and posts the tapped reply in the call's chat, tested end to end with a second bot speaking recorded audio.
 
 ## What existed before 23 November
 
