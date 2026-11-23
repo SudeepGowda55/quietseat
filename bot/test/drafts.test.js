@@ -15,3 +15,15 @@ test('with no model, or a model that does not answer in time, the built-in repli
   assert.equal((await makeDrafts('')('can you?')).by, 'built-in')
   assert.equal((await makeDrafts('http://127.0.0.1:9', { timeoutMs: 300 })('can you?')).by, 'built-in')
 })
+
+test('model replies that invent facts, fake a decline or forget to ask are swapped for built-in ones', async () => {
+  const { createServer } = await import('node:http')
+  const server = createServer((req, res) => {
+    res.setHeader('content-type', 'application/json')
+    res.end(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ accept: "I merged it into 'main'.", decline: 'Sure, happy to.', ask: 'Tell me more.' }) } }] }))
+  }).listen(8792)
+  const r = await makeDrafts('http://127.0.0.1:8792')('Sudeep, which branch has the fix?')
+  server.close()
+  assert.equal(r.by, 'llm')
+  assert.deepEqual(r.replies, builtIn('Sudeep, which branch has the fix?'))
+})
