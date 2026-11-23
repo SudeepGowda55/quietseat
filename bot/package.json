@@ -1,0 +1,24 @@
+{
+  "name": "quietseat-bot",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@discordjs/opus": "0.11.0",
+    "@discordjs/voice": "0.19.2",
+    "discord.js": "14.28.1",
+    "prism-media": "1.3.5",
+    "ws": "8.18.3"
+  },
+  "devDependencies": {
+    "patch-package": "8.0.0"
+  }
+}
